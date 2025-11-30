@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       
-      <h1>Zap Shift</h1>
+      <h1 className='text-5xl'>Zap Shift</h1>
      
     </>
   )
