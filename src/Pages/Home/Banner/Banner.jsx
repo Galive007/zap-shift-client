@@ -9,8 +9,15 @@ import { RiArrowRightUpLine } from 'react-icons/ri';
 
 
 const Banner = () => {
+
+    const handleClick=(e)=>{
+        e.preventDefault()
+        console.log('clicked');
+        
+    }
+
     return (
-        <div className='relative'>
+        <div className='relative mt-6'>
             <Carousel autoPlay={true} showThumbs={false} showIndicators={true} showStatus={false} dynamicHeight={true} stopOnHover={true} infiniteLoop={true}>
                 <div>
                     <img src={banner1} />
@@ -27,11 +34,11 @@ const Banner = () => {
                 <div className='absolute bottom-5 left-3 sm:bottom-8 md:bottom-14 lg:bottom-22 md:left-15
             '>
                     <div className='flex items-center'>
-                        <button className='px-3 md:px-8 bg-secondary rounded-3xl py-1 md:py-2' >Track Your Parcel</button>
+                        <button className='px-3 md:px-8 bg-secondary rounded-3xl font-bold py-1 md:py-2' onClick={handleClick}>Track Your Parcel</button>
                         <div>
                             <RiArrowRightUpLine className='text-secondary text-3xl bg-black rounded-3xl' />
                         </div>
-                        <button className='ml-3 px-2 md:px-8 btn rounded-xl py-1 md:py-2' >Be A Rider</button>
+                        <button className='ml-3 px-2 md:px-8 btn rounded-xl py-1 md:py-2'>Be A Rider</button>
                         <div></div>
                     </div>
                 </div>
