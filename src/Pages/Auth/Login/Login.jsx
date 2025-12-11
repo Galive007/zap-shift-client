@@ -1,25 +1,40 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../../Hooks/useAuth';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import SocialLogin from '../SocialLogin/SocialLogin';
 
 const Login = () => {
-    const navigation=useNavigate()
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const location = useLocation()
+    const navigate = useNavigate()
+    const { register, handleSubmit, formState: { errors },getValues  } = useForm()
+
+    const { signinUser,forgetPassword } = useAuth()
 
 
-    const { signinUser } = useAuth()
     const handleLogin = (data) => {
-        console.log('data', data);
+        
         signinUser(data.email, data.password)
-            .then(result => {
-                console.log(result.user);
-                navigation('/')
+            .then(() => {
+                
+                navigate(location?.state || '/')
             })
             .catch(error => {
                 console.log(error);
             })
+    }
+    const handleForget=()=>{
+        // console.log('clicked');
+        const email=getValues('email')
+
+        if (!email) {
+            alert('please enter your email first')
+        }
+        forgetPassword(email)
+        .then(()=>{
+            alert("Password reset link sent to your email");
+        })
+        .catch(err => console.log(err));
     }
 
     return (
@@ -42,8 +57,8 @@ const Login = () => {
                         {errors.password?.type === 'required' && <p className='text-red-600'>Password Is Required.</p>}
                         {errors.password?.type === 'minLength' && <p className='text-red-600'>Password must be at least 6 characters.</p>}
                         {errors.password?.type === 'pattern' && <p className='text-red-600'>Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character.</p>}
-                        <div><a className="link link-hover">Forgot password?</a></div>
-                        <p>New To Zap Shift.Please.....<Link className='underline hover:text-blue-600' to='/register'>Registration</Link></p>
+                        <div><a className="link link-hover" onClick={handleForget}>Forgot password?</a></div>
+                        <p>New To Zap Shift.Please.....<Link className='underline hover:text-blue-600' to='/register' state={location.state}>Registration</Link></p>
                         <button className="btn mt-4 text-primary btn-secondary">Login</button>
                     </fieldset>
                 </form>

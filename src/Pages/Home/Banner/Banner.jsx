@@ -6,6 +6,7 @@ import banner2 from '../../../assets/banner/banner2.png'
 import banner3 from '../../../assets/banner/banner3.png'
 
 import { RiArrowRightUpLine } from 'react-icons/ri';
+import { Link } from 'react-router';
 
 
 const Banner = () => {
@@ -38,7 +39,7 @@ const Banner = () => {
                         <div>
                             <RiArrowRightUpLine className='text-secondary text-3xl bg-black rounded-3xl' />
                         </div>
-                        <button className='ml-3 px-2 md:px-8 btn rounded-xl py-1 md:py-2'>Be A Rider</button>
+                        <Link to='/rider' className='ml-3 px-2 md:px-8 btn rounded-xl py-1 md:py-2'>Be A Rider</Link>
                         <div></div>
                     </div>
                 </div>

@@ -1,21 +1,55 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../../Hooks/useAuth';
-import { Link } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import SocialLogin from '../SocialLogin/SocialLogin';
+import axios from 'axios';
 
 const Register = () => {
+    const location=useLocation()
+    console.log('register',location);
+    
+    const navigate = useNavigate()
 
     const { register, handleSubmit, formState: { errors } } = useForm()
+    const { registerUser, updateUserProfile } = useAuth()
 
-    const { registerUser } = useAuth()
     const handleRegistration = (data) => {
-        // console.log('data',data);
-        console.log('data', data);
+        // console.log('data', data);
+        const profileImage = data.photo[0]
+        // console.log(profileImage);
+
 
         registerUser(data.email, data.password)
             .then(result => {
                 console.log(result.user);
+                //1. store the image in form data
+                const formData = new FormData()
+                formData.append('image', profileImage)
+
+                // 2.send the photo to the store and get the url
+                const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`
+                axios.post(image_API_URL, formData)
+                    .then(res => {
+                        console.log('after image upload', res.data.data.url);
+
+                        // update user profile to firebase
+                        const userProfile = {
+                            displayName: data.name,
+                            photoURL: res.data.data.url
+                        }
+
+                        updateUserProfile(userProfile)
+                            .then(() => {
+                                // console.log('user profile updated done',res); 
+                                navigate(location?.state||'/')
+                            })
+
+                            .catch(error => {
+                                console.log(error);
+                            })
+                    })
+                
             })
             .catch(error => {
                 console.log(error);
@@ -53,7 +87,7 @@ const Register = () => {
                     {errors.password?.type === 'minLength' && <p className='text-red-600'>Password must be at least 6 characters.</p>}
                     {errors.password?.type === 'pattern' && <p className='text-red-600'>Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character.</p>}
                     <div><a className="link link-hover">Forgot password?</a></div>
-                    <p>Already Have An Account.Please...... <Link className='underline hover:text-blue-600' to='/login'>Login</Link></p>
+                    <p>Already Have An Account.Please...... <Link className='underline hover:text-blue-600' to='/login' state={location.state}>Login</Link></p>
                     <button className="btn  text-primary btn-secondary mt-4">Registration</button>
                 </fieldset>
             </form>

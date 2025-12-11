@@ -38,7 +38,7 @@ const Navbar = () => {
                         {links}
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl"><Logo></Logo></a>
+                <div className="btn btn-ghost text-xl"><Logo></Logo></div>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
@@ -50,7 +50,7 @@ const Navbar = () => {
                 {
                     user ? <>
                     <Link className='btn text-primary hover:bg-secondary mr-3' onClick={handleLogout}>Sign out</Link>
-                    <Link to='beARider' className='btn text-primary hover:bg-secondary'>Be a Rider</Link>
+                    <Link to='/rider' className='btn text-primary hover:bg-secondary'>Be a Rider</Link>
                     </>
                         : <>
                             <Link to='/login' className='btn text-primary mr-3 hover:bg-secondary'>Sign In</Link>

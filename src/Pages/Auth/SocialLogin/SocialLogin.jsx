@@ -1,24 +1,24 @@
 import React from 'react';
 import useAuth from '../../../Hooks/useAuth';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 
 
 const SocialLogin = () => {
-    const navigation=useNavigate()
+    const navigate = useNavigate()
+    const location = useLocation()
+    const { googleSignIn } = useAuth()
 
-    const {googleSignIn}=useAuth()
-
-    const handleGoogleSignIn=()=>{
+    const handleGoogleSignIn = () => {
         googleSignIn()
-        .then(result=>{
-            console.log(result.user);
-            navigation('/')
-        })
-        .catch(error=>{
-            console.log(error);
-            
-        })
+            .then(result => {
+                console.log(result.user);
+                navigate(location.state || '/')
+            })
+            .catch(error => {
+                console.log(error);
+
+            })
     }
     return (
         <div className='text-center *:my-1'>
