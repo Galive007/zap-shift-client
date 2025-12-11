@@ -1,13 +1,27 @@
 import React from 'react';
 import Logo from '../../../Components/Logo';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
+import useAuth from '../../../Hooks/useAuth';
+import { RiArrowRightUpLine } from 'react-icons/ri';
 
 const Navbar = () => {
 
+    const { user, logOut } = useAuth()
+
+    const handleLogout = () => {
+        logOut()
+            .then(() => {
+
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
     const links = <>
         <li><NavLink to=''>Services</NavLink></li>
-        <li><NavLink to='/about'>About us</NavLink></li> 
-        <li><NavLink to='/coverage'>Coverage</NavLink></li> 
+        <li><NavLink to='/about'>About us</NavLink></li>
+        <li><NavLink to='/coverage'>Coverage</NavLink></li>
     </>
 
 
@@ -32,10 +46,26 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Button</a>
+
+                {
+                    user ? <>
+                    <Link className='btn text-primary hover:bg-secondary mr-3' onClick={handleLogout}>Sign out</Link>
+                    <Link to='beARider' className='btn text-primary hover:bg-secondary'>Be a Rider</Link>
+                    </>
+                        : <>
+                            <Link to='/login' className='btn text-primary mr-3 hover:bg-secondary'>Sign In</Link>
+                            <Link to='/register' className='btn text-primary hover:bg-secondary'>Sign Up</Link>
+                            <span>
+                                <RiArrowRightUpLine className='text-secondary text-4xl bg-black rounded-3xl' />
+                            </span>
+                        </>
+                }
             </div>
         </div>
     );
 };
 
 export default Navbar;
+
+
+

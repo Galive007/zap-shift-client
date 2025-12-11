@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ReviewsCard = ({ reviewCard }) => {
-    console.log(reviewCard);
+    // console.log(reviewCard);
 
     const {review,userName,user_photoURL,user_email}=reviewCard
     return (
