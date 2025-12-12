@@ -3,15 +3,17 @@ import { ColorRing } from 'react-loader-spinner';
 
 const Loading = () => {
     return (
-        <ColorRing
+        <div className='flex justify-center'>
+            <ColorRing
             visible={true}
             height="80"
             width="80"
             ariaLabel="color-ring-loading"
             wrapperStyle={{}}
             wrapperClass="color-ring-wrapper"
-            colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+            colors={['#CAEB66', '#03373D', '#CAEB66', '#abbd81', '#03373D']}
         />
+        </div>
     );
 };
 
