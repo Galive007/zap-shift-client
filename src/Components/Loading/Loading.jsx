@@ -3,7 +3,7 @@ import { ColorRing } from 'react-loader-spinner';
 
 const Loading = () => {
     return (
-        <div className='flex justify-center'>
+        <div className='flex justify-center items-center'>
             <ColorRing
             visible={true}
             height="80"

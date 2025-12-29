@@ -8,7 +8,9 @@ const RootLayout = () => {
         <div className='bg-[#EAECED] py-5'>
             <div className='max-w-7xl mx-auto'>
                 <Navbar></Navbar>
-                <Outlet></Outlet>
+                <div className=''>
+                    <Outlet></Outlet>
+                </div>
                 <Footer></Footer>
             </div>
         </div>

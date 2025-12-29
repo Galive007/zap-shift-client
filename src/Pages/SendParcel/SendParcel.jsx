@@ -1,15 +1,24 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useLoaderData } from 'react-router';
 
 const SendParcel = () => {
+    const { register, handleSubmit,watch, formState: { errors } } = useForm();
+    const serviceCenters = useLoaderData()
+    const regionsDuplicate = serviceCenters.map(c => c.region)
+    const regions = [...new Set(regionsDuplicate)]
+    const senderRegion=watch('senderRegion')
+    const receiverRegion = watch('receiverRegion');
+    // console.log(regions)
 
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const districtByRegion = region => {
+        const regionDistricts=serviceCenters.filter(c=>c.region===region)
+        const districts=regionDistricts.map(d=>d.district)
+        return districts
+    }
 
     const handleSendParcel = (data) => {
-
-        console.log('clicked', data);
-
-
+        console.log('Form Submitted:', data);
     }
 
     return (
@@ -19,29 +28,42 @@ const SendParcel = () => {
                 <p className="text-gray-600 mb-8">Enter your parcel details</p>
 
                 <form onSubmit={handleSubmit(handleSendParcel)}>
-                    {/* Document Type */}
+                    {/* Parcel Type */}
                     <div className="flex items-center gap-8 mb-10">
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="docType" className="radio" value='document' {...register('parcelType')} />
+                            <input type="radio" value="document" {...register('parcelType', { required: true })} />
                             <span className="text-gray-700">Document</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="docType" className="radio" value='non-document' {...register('parcelType')} />
-                            <span className="text-gray-700">Not-Document</span>
+                            <input type="radio" value="non-document" {...register('parcelType', { required: true })} />
+                            <span className="text-gray-700">Non-Document</span>
                         </label>
                     </div>
+                    {errors.parcelType && <p className="text-red-600 mb-4">Parcel type is required.</p>}
 
                     {/* Parcel Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         <div>
                             <label className="label text-gray-700">Parcel Name</label>
-                            <input type="text" {...register('parcelName')} placeholder="Parcel Name" className="input input-bordered w-full" />
+                            <input
+                                type="text"
+                                {...register('parcelName', { required: true })}
+                                placeholder="Parcel Name"
+                                className="input input-bordered w-full"
+                            />
+                            {errors.parcelName && <p className="text-red-600">Parcel name is required</p>}
                         </div>
-
 
                         <div>
                             <label className="label text-gray-700">Parcel Weight (KG)</label>
-                            <input type='number' {...register('parcelWeight')} placeholder="Parcel Weight (KG)" className="input input-bordered w-full" />
+                            <input
+                                type="number"
+                                step="0.01"
+                                {...register('parcelWeight', { required: true, min: 0.1 })}
+                                placeholder="Parcel Weight (KG)"
+                                className="input input-bordered w-full"
+                            />
+                            {errors.parcelWeight && <p className="text-red-600">Parcel weight is required</p>}
                         </div>
                     </div>
 
@@ -52,34 +74,87 @@ const SendParcel = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="label">Sender Name</label>
-                                    <input type="text" {...register('senderName')} placeholder="Sender Name" className="input input-bordered w-full" />
+                                    <input
+                                        type="text"
+                                        {...register('senderName', { required: true })}
+                                        placeholder="Sender Name"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.senderName && <p className="text-red-600">Sender name is required</p>}
                                 </div>
 
+                                <div>
+                                    <label className="label">Sender Email</label>
+                                    <input
+                                        type="email"
+                                        {...register('senderEmail', { required: true })}
+                                        placeholder="Sender Email"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.senderEmail && <p className="text-red-600">Sender email is required</p>}
+                                </div>
 
                                 <div>
                                     <label className="label">Address</label>
-                                    <input type="text" {...register('senderAddress')} placeholder="Address" className="input input-bordered w-full" />
+                                    <input
+                                        type="text"
+                                        {...register('senderAddress', { required: true })}
+                                        placeholder="Address"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.senderAddress && <p className="text-red-600">Address is required</p>}
                                 </div>
-
 
                                 <div>
                                     <label className="label">Sender Phone No</label>
-                                    <input type="text" {...register('senderPhoneNo')} placeholder="Sender Phone No" className="input input-bordered w-full" />
+                                    <input
+                                        type="text"
+                                        {...register('senderPhoneNo', { required: true })}
+                                        placeholder="Sender Phone No"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.senderPhoneNo && <p className="text-red-600">Phone number is required</p>}
                                 </div>
 
+                                <div>
+                                    <label className="label">Your Region</label>
+                                    <select
+                                        {...register('senderRegion', { required: true })}
+                                        defaultValue=""
+                                        className="select w-full"
+                                    >
+                                        <option value="" disabled>Pick a Region</option>
+                                        {
+                                            regions.map((r, i) => <option key={i} value={r}>{r}</option>)
+                                        }
+
+
+                                    </select>
+                                    {errors.senderRegion && <p className="text-red-600">Region is required</p>}
+                                </div>
 
                                 <div>
                                     <label className="label">Your District</label>
-                                    <select className="select select-bordered w-full">
-                                        <option disabled selected>Select your District</option>
-                                        <option value=""></option>
+                                    <select
+                                        {...register('senderDistrict', { required: true })}
+                                        defaultValue=""
+                                        className="select select-bordered w-full"
+                                    >
+                                        <option value="" disabled>Select your District</option>
+                                        {
+                                            districtByRegion(senderRegion).map((r, i) => <option key={i} value={r}>{r}</option>)
+                                        }
                                     </select>
+                                    {errors.senderDistrict && <p className="text-red-600">District is required</p>}
                                 </div>
-
 
                                 <div>
                                     <label className="label">Pickup Instruction</label>
-                                    <textarea className="textarea textarea-bordered w-full" {...register('senderPickupInstruction')} placeholder="Pickup Instruction"></textarea>
+                                    <textarea
+                                        {...register('senderPickupInstruction')}
+                                        placeholder="Pickup Instruction"
+                                        className="textarea textarea-bordered w-full"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -90,33 +165,85 @@ const SendParcel = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="label">Receiver Name</label>
-                                    <input type="text" placeholder="Sender Name" {...register('receiverName')} className="input input-bordered w-full" />
+                                    <input
+                                        type="text"
+                                        {...register('receiverName', { required: true })}
+                                        placeholder="Receiver Name"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.receiverName && <p className="text-red-600">Receiver name is required</p>}
                                 </div>
 
+                                <div>
+                                    <label className="label">Receiver Email</label>
+                                    <input
+                                        type="email"
+                                        {...register('receiverEmail', { required: true })}
+                                        placeholder="Receiver Email"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.receiverEmail && <p className="text-red-600">Receiver email is required</p>}
+                                </div>
 
                                 <div>
                                     <label className="label">Receiver Address</label>
-                                    <input type="text" placeholder="Address" {...register('receiverAddress')} className="input input-bordered w-full" />
+                                    <input
+                                        type="text"
+                                        {...register('receiverAddress', { required: true })}
+                                        placeholder="Receiver Address"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.receiverAddress && <p className="text-red-600">Address is required</p>}
                                 </div>
-
 
                                 <div>
                                     <label className="label">Receiver Contact No</label>
-                                    <input type="text" placeholder="Sender Contact No" {...register('receiverPhoneNo')} className="input input-bordered w-full" />
+                                    <input
+                                        type="text"
+                                        {...register('receiverPhoneNo', { required: true })}
+                                        placeholder="Receiver Contact No"
+                                        className="input input-bordered w-full"
+                                    />
+                                    {errors.receiverPhoneNo && <p className="text-red-600">Phone number is required</p>}
                                 </div>
 
+                                <div>
+                                    <label className="label">Receiver Region</label>
+                                    <select
+                                        {...register('receiverRegion', { required: true })}
+                                        defaultValue=""
+                                        className="select w-full"
+                                    >
+                                        <option value="" disabled>Pick a Region</option>
+                                        {
+                                            regions.map((r, i) => <option key={i} value={r}>{r}</option>)
+                                        }
+                                    </select>
+                                    {errors.receiverRegion && <p className="text-red-600">Region is required</p>}
+                                </div>
 
                                 <div>
                                     <label className="label">Receiver District</label>
-                                    <select className="select select-bordered w-full">
-                                        <option disabled selected>Select your District</option>
+                                    <select
+                                        {...register('receiverDistrict', { required: true })}
+                                        defaultValue=""
+                                        className="select select-bordered w-full"
+                                    >
+                                        <option value="" disabled>Select your District</option>
+                                       {
+                                            districtByRegion(receiverRegion).map((r, i) => <option key={i} value={r}>{r}</option>)
+                                        }
                                     </select>
+                                    {errors.receiverDistrict && <p className="text-red-600">District is required</p>}
                                 </div>
-
 
                                 <div>
                                     <label className="label">Delivery Instruction</label>
-                                    <textarea className="textarea textarea-bordered w-full" {...register('receiverDeliveryInstruction')} placeholder="Delivery Instruction"></textarea>
+                                    <textarea
+                                        {...register('receiverDeliveryInstruction')}
+                                        placeholder="Delivery Instruction"
+                                        className="textarea textarea-bordered w-full"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -124,10 +251,12 @@ const SendParcel = () => {
 
                     <p className="text-sm text-gray-600 mt-6">* Pickup Time 4pm-7pm Approx.</p>
 
-                    <button className="btn bg-secondary hover:bg-lime-500 mt-6">Proceed to Confirm Booking</button>
+                    <button type="submit" className="btn bg-secondary hover:bg-lime-500 mt-6">
+                        Proceed to Confirm Booking
+                    </button>
                 </form>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 

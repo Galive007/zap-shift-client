@@ -9,6 +9,7 @@ import Register from "../Pages/Auth/Register/Register";
 import PrivateRoute from "./PrivateRoute";
 import Rider from "../Pages/Rider/Rider";
 import SendParcel from "../Pages/SendParcel/SendParcel";
+import Loading from "../Components/Loading/Loading";
 
 export const router = createBrowserRouter([
   {
@@ -38,7 +39,9 @@ export const router = createBrowserRouter([
         path:'send-parcel',
         element:<PrivateRoute>
           <SendParcel></SendParcel>
-        </PrivateRoute>
+        </PrivateRoute>,
+        loader:()=>fetch('/ServiceCenters.json').then(res=>res.json()),
+        hydrateFallbackElement:<Loading></Loading>
       }
     ]
   },
