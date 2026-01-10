@@ -1,24 +1,64 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useLoaderData } from 'react-router';
+import Swal from 'sweetalert2';
 
 const SendParcel = () => {
-    const { register, handleSubmit,watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, control, formState: { errors }, reset } = useForm();
     const serviceCenters = useLoaderData()
     const regionsDuplicate = serviceCenters.map(c => c.region)
     const regions = [...new Set(regionsDuplicate)]
-    const senderRegion=watch('senderRegion')
-    const receiverRegion = watch('receiverRegion');
+    const senderRegion = watch('senderRegion')
+    const receiverRegion = useWatch({ control, name: 'receiverRegion' });
     // console.log(regions)
 
     const districtByRegion = region => {
-        const regionDistricts=serviceCenters.filter(c=>c.region===region)
-        const districts=regionDistricts.map(d=>d.district)
+        const regionDistricts = serviceCenters.filter(c => c.region === region)
+        const districts = regionDistricts.map(d => d.district)
         return districts
     }
 
     const handleSendParcel = (data) => {
         console.log('Form Submitted:', data);
+        // reset()
+        const isDocument = data.parcelType === 'document';
+        const isSameDistrict = data.senderDistrict === data.receiverDistrict
+        const parcelWeight = parseFloat(data.parcelWeight)
+        console.log(isSameDistrict);
+        let cost = 0
+        if (isDocument) {
+            cost = isSameDistrict ? 60 : 80;
+        }
+        else {
+            if (parcelWeight < 3) {
+                cost = isSameDistrict ? 110 : 150;
+            }
+            else {
+                const minCharge = isSameDistrict ? 110 : 150;
+                const extraWeight = parcelWeight - 3
+                const extraCharge = isSameDistrict ? extraWeight * 40 : extraWeight * 40 + 40;
+                cost = minCharge + extraCharge
+            }
+        }
+        console.log('cost', cost);
+
+        Swal.fire({
+            title: "Are you agree?",
+            text: `You will be charged ${cost} BDT`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "I Agree"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Swal.fire({
+                //     title: "Deleted!",
+                //     text: "Your file has been deleted.",
+                //     icon: "success"
+                // });
+            }
+        });
     }
 
     return (
@@ -59,7 +99,7 @@ const SendParcel = () => {
                             <input
                                 type="number"
                                 step="0.01"
-                                {...register('parcelWeight', { required: true, min: 0.1 })}
+                                {...register('parcelWeight', { required: true, min: 0.01 })}
                                 placeholder="Parcel Weight (KG)"
                                 className="input input-bordered w-full"
                             />
@@ -230,7 +270,7 @@ const SendParcel = () => {
                                         className="select select-bordered w-full"
                                     >
                                         <option value="" disabled>Select your District</option>
-                                       {
+                                        {
                                             districtByRegion(receiverRegion).map((r, i) => <option key={i} value={r}>{r}</option>)
                                         }
                                     </select>
