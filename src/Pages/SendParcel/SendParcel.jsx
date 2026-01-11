@@ -2,9 +2,15 @@ import React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useLoaderData } from 'react-router';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import useAuth from '../../Hooks/useAuth';
 
 const SendParcel = () => {
     const { register, handleSubmit, watch, control, formState: { errors }, reset } = useForm();
+    const { user } = useAuth()
+    // console.log(user);
+
+    const axiosSecure = useAxiosSecure()
     const serviceCenters = useLoaderData()
     const regionsDuplicate = serviceCenters.map(c => c.region)
     const regions = [...new Set(regionsDuplicate)]
@@ -19,6 +25,7 @@ const SendParcel = () => {
     }
 
     const handleSendParcel = (data) => {
+
         console.log('Form Submitted:', data);
         // reset()
         const isDocument = data.parcelType === 'document';
@@ -40,7 +47,10 @@ const SendParcel = () => {
                 cost = minCharge + extraCharge
             }
         }
-        console.log('cost', cost);
+        const parcelData = {
+            ...data,
+            cost
+        };
 
         Swal.fire({
             title: "Are you agree?",
@@ -52,6 +62,17 @@ const SendParcel = () => {
             confirmButtonText: "I Agree"
         }).then((result) => {
             if (result.isConfirmed) {
+                axiosSecure.post('/parcels', parcelData)
+                    .then(res => {
+                        if (res.data.insertedId) {
+                            Swal.fire({
+                                    title: "Done",
+                                    text: "Your Booking Is Proceed.",
+                                    icon: "success"
+                                });
+                                reset()
+                            }
+                    })
                 // Swal.fire({
                 //     title: "Deleted!",
                 //     text: "Your file has been deleted.",
@@ -63,20 +84,21 @@ const SendParcel = () => {
 
     return (
         <div className="w-full min-h-screen flex justify-center py-10 px-4">
-            <div className="bg-white shadow-md rounded-2xl p-10 w-full max-w-6xl">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">Send A Parcel</h1>
-                <p className="text-gray-600 mb-8">Enter your parcel details</p>
+            <div className=" shadow-md rounded-2xl p-10 w-full max-w-6xl">
+                <h1 className="text-3xl font-bold  mb-2">Send A Parcel</h1>
+                <p className=" mb-8">Enter your parcel details</p>
 
                 <form onSubmit={handleSubmit(handleSendParcel)}>
                     {/* Parcel Type */}
                     <div className="flex items-center gap-8 mb-10">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="radio" value="document" {...register('parcelType', { required: true })} />
-                            <span className="text-gray-700">Document</span>
+                            <span className="">Document</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value="non-document" {...register('parcelType', { required: true })} />
-                            <span className="text-gray-700">Non-Document</span>
+                            <input type="radio"
+                            value="non-document" {...register('parcelType', { required: true })} />
+                            <span className="">Non-Document</span>
                         </label>
                     </div>
                     {errors.parcelType && <p className="text-red-600 mb-4">Parcel type is required.</p>}
@@ -84,7 +106,7 @@ const SendParcel = () => {
                     {/* Parcel Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         <div>
-                            <label className="label text-gray-700">Parcel Name</label>
+                            <label className="label font-bold">Parcel Name</label>
                             <input
                                 type="text"
                                 {...register('parcelName', { required: true })}
@@ -95,7 +117,7 @@ const SendParcel = () => {
                         </div>
 
                         <div>
-                            <label className="label text-gray-700">Parcel Weight (KG)</label>
+                            <label className="label font-bold">Parcel Weight (KG)</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -117,6 +139,7 @@ const SendParcel = () => {
                                     <input
                                         type="text"
                                         {...register('senderName', { required: true })}
+                                        defaultValue={user?.displayName}
                                         placeholder="Sender Name"
                                         className="input input-bordered w-full"
                                     />
@@ -128,6 +151,7 @@ const SendParcel = () => {
                                     <input
                                         type="email"
                                         {...register('senderEmail', { required: true })}
+                                        defaultValue={user?.email}
                                         placeholder="Sender Email"
                                         className="input input-bordered w-full"
                                     />

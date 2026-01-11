@@ -1,13 +1,20 @@
+/**
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
-/* @plugin "daisyui"; */
+
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
-  themes: light --default;
+}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #03373D;
+  --color-secondary: #CAEB66;
 }
 
 @plugin "daisyui/theme" {
-  name: "light";
+  name: "dark";
   default: true;
   --color-primary: #03373D;
   --color-secondary: #CAEB66;
@@ -21,7 +28,46 @@ body{
 }
 
 .icon-linear-gradient-bg {
-    /* Applying the linear gradient specified by the user */
+
     background: linear-gradient(180deg, #EEEDFC 0%, rgba(238, 237, 252, 0.00) 100%);
     
+}
+*/
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+/* DaisyUI Plugin */
+@plugin "daisyui";
+
+/* DaisyUI themes */
+@layer base {
+  /* You can optionally define custom CSS here */
+}
+
+:root {
+  /* Light theme colors */
+  --color-primary: #03373D;
+  --color-secondary: #CAEB66;
+  --base-100: #ffffff;
+  --base-content: #111827;
+}
+
+[data-theme="dark"] {
+  /* Dark theme colors */
+  --color-primary: #03373D;
+  --color-secondary: #CAEB66;
+  --base-100: #111827;
+  --base-content: #F3F4F6;
+}
+
+/* Body font */
+body {
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+/* Example gradient background */
+.icon-linear-gradient-bg {
+  background: linear-gradient(180deg, #EEEDFC 0%, rgba(238, 237, 252, 0.00) 100%);
 }

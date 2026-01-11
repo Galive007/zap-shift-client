@@ -26,7 +26,7 @@ const HowItWorks = () => {
     return (
         <div className="py-6 md:py-10 lg:py-16">
             <div className="max-w-7xl mx-auto px-6">
-                <h2 className="text-3xl text-primary font-bold mb-5 md:mb-7 lg:mb-10">How it Works</h2>
+                <h2 className="text-3xl font-bold mb-5 md:mb-7 lg:mb-10">How it Works</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {steps.map((step, index) => (
@@ -35,7 +35,7 @@ const HowItWorks = () => {
                             className="bg-white p-8 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300"
                         >
                             <div className="text-teal-800 mb-4">{step.icon}</div>
-                            <h3 className="font-semibold text-xl mb-3">{step.title}</h3>
+                            <h3 className="font-semibold text-xl text-primary mb-3">{step.title}</h3>
                             <p className="text-gray-600 text-sm">{step.text}</p>
                         </div>
                     ))}

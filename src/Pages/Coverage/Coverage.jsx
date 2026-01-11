@@ -24,7 +24,7 @@ const Coverage = () => {
     }
     return (
         <div>
-            <div className="bg-white my-10 p-8 rounded-2xl max-w-5xl mx-auto">
+            <div className=" my-10 p-8 rounded-2xl max-w-5xl mx-auto">
                 {/* Title */}
                 <h2 className="text-2xl font-bold text-teal-900 mb-6">
                     We are available in 64 districts

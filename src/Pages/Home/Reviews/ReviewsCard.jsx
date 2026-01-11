@@ -10,7 +10,7 @@ const ReviewsCard = ({ reviewCard }) => {
             <div className="text-[#cae2e5] text-4xl mb-3">❝</div>
 
             {/* Main Text */}
-            <p className=" text-[15px]">
+            <p className="text-primary text-[15px]">
                 {review}
             </p>
 

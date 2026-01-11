@@ -45,7 +45,7 @@ const About = () => {
             <div>
 
                 {/* // Outer Container */}
-                <section className="bg-white py-12 px-4 rounded-2xl">
+                <section className=" py-12 px-4 rounded-2xl">
 
                     {/* Inject custom styles into the DOM (Alternative: use a separate CSS file) */}
                     <style>{customActiveStyle}</style>
@@ -53,11 +53,11 @@ const About = () => {
                     {/* Center content and limit width */}
                     <div className="container mx-auto max-w-5xl">
                         <div className='max-w-2xl mb-3'>
-                            <h1 className='text-5xl font-extrabold text-primary my-3'>About Us</h1>
-                            <p className='text-[#606060]'>Enjoy fast, reliable parcel delivery with real-time tracking and zero hassle. From personal packages to business shipments — we deliver on time, every time.</p>
+                            <h1 className='text-5xl font-extrabold my-3'>About Us</h1>
+                            <p className=''>Enjoy fast, reliable parcel delivery with real-time tracking and zero hassle. From personal packages to business shipments — we deliver on time, every time.</p>
                         </div>
                         {/* DaisyUI Tabs Navigation */}
-                        <div className="tabs tabs-boxed bg-white mb-8 border-b border-gray-200">
+                        <div className="tabs tabs-boxed mb-8 border-b border-gray-200">
 
                             {tabsData.map((tab) => (
                                 <a
@@ -77,7 +77,7 @@ const About = () => {
                         {/* Tab Content Area */}
                         <div className="py-6">
                             {/* This matches the simple body font style */}
-                            <div className="text-gray-700 leading-relaxed font-light text-base md:text-lg">
+                            <div className="leading-relaxed font-light text-base md:text-lg">
                                 {activeTabData ? activeTabData.content : null}
                             </div>
                         </div>
