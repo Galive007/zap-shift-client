@@ -149,7 +149,7 @@ export default Navbar;
 //       ${scrolled ? "shadow-lg" : ""}`}
 //     >
 //       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        
+
 //         {/* Logo */}
 //         <Link to="/" className="flex items-center gap-2 text-xl font-bold">
 //           <Logo /> 
@@ -251,144 +251,145 @@ import useAuth from "../../../Hooks/useAuth";
 import { RiArrowRightUpLine, RiSunLine, RiMoonLine, RiMenu3Line, RiCloseLine, RiUser3Line } from "react-icons/ri";
 
 const Navbar = () => {
-  const { user, logOut } = useAuth();
+    const { user, logOut } = useAuth();
 
-  // ----------------
-  // Theme
-  // ----------------
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  useEffect(() => {
-    const html = document.querySelector("html");
-    html.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+    // ----------------
+    // Theme
+    // ----------------
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+    useEffect(() => {
+        const html = document.querySelector("html");
+        html.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+    }, [theme]);
+    const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
 
-  // ----------------
-  // Scroll shadow
-  // ----------------
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // ----------------
+    // Scroll shadow
+    // ----------------
+    const [scrolled, setScrolled] = useState(false);
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
-  // ----------------
-  // Mobile menu
-  // ----------------
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const toggleMobile = () => setMobileOpen(!mobileOpen);
+    // ----------------
+    // Mobile menu
+    // ----------------
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const toggleMobile = () => setMobileOpen(!mobileOpen);
 
-  const handleLogout = () => logOut().catch(err => console.log(err));
+    const handleLogout = () => logOut().catch(err => console.log(err));
 
-  const links = [
-    { name: "Services", to: "/" },
-    { name: "About Us", to: "/about" },
-    { name: "Coverage", to: "/coverage" },
-    { name: "Send Parcel", to: "/send-parcel" },
-  ];
+    const links = [
+        { name: "Services", to: "/" },
+        { name: "About Us", to: "/about" },
+        { name: "Coverage", to: "/coverage" },
+        { name: "Send Parcel", to: "/send-parcel" },
+    ];
 
-  return (
-    <header
-      className={`sticky rounded-xl top-0 z-50 backdrop-blur-md bg-base-100/70 transition-shadow duration-300
+    return (
+        <header
+            className={`sticky rounded-xl top-0 z-50 backdrop-blur-md bg-base-100/70 transition-shadow duration-300
         ${scrolled ? "shadow-lg" : ""}`}
-    >
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        >
+            <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-        {/* ------------------------- */}
-        {/* LEFT: Logo */}
-        {/* ------------------------- */}
-        <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-          <Logo />
-        </Link>
+               
+                <div className="flex items-center gap-2 text-xl font-bold">
+                    <Logo />
+                </div>
 
-        {/* ------------------------- */}
-        {/* CENTER: Links */}
-        {/* ------------------------- */}
-        <ul className="hidden lg:flex items-center gap-6 text-base font-medium">
-          {links.map(link => (
-            <li key={link.to}>
-              <NavLink
-                to={link.to}
-                className={({ isActive }) =>
-                  isActive ? "text-secondary underline underline-offset-4" : "hover:text-secondary transition-colors"
-                }
-              >
-                {link.name}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+               
+                <ul className="hidden lg:flex items-center gap-6 text-base font-medium">
+                    {links.map(link => (
+                        <li key={link.to}>
+                            <NavLink
+                                to={link.to}
+                                className={({ isActive }) =>
+                                    isActive ? "text-secondary underline underline-offset-4" : "hover:text-secondary transition-colors"
+                                }
+                            >
+                                {link.name}
+                            </NavLink>
+                        </li>
+                    ))}
+                </ul>
 
-        {/* ------------------------- */}
-        {/* RIGHT: Theme + User Buttons */}
-        {/* ------------------------- */}
-        <div className="flex items-center gap-3">
+                {/* ------------------------- */}
+                {/* RIGHT: Theme + User Buttons */}
+                {/* ------------------------- */}
+                <div className="flex items-center gap-3">
 
-          {/* Theme Toggle */}
-          <button
-            className="btn btn-ghost btn-sm rounded-full text-xl"
-            onClick={toggleTheme}
-            title="Toggle Dark/Light"
-          >
-            {theme === "light" ? <RiMoonLine /> : <RiSunLine />}
-          </button>
+                    {/* Theme Toggle */}
+                    <button
+                        className="btn btn-ghost btn-sm rounded-full text-xl"
+                        onClick={toggleTheme}
+                        title="Toggle Dark/Light"
+                    >
+                        {theme === "light" ? <RiMoonLine /> : <RiSunLine />}
+                    </button>
 
-          {/* Smart User Buttons */}
-          {user ? (
-            <div className="relative group">
-              {/* Single visible button */}
-              <button className="btn btn-primary btn-sm rounded-full">
-                <RiUser3Line className="text-xl" />
-              </button>
+                    {/* Smart User Buttons */}
+                    {user ? (
+                        <div className="relative group">
+                            {/* Single visible button */}
+                            <button className="btn btn-primary btn-sm rounded-full">
+                                <RiUser3Line className="text-xl" />
+                            </button>
 
-              {/* Hidden buttons that appear on hover */}
-              <div className="absolute right-0 top-full mt-2 flex flex-col gap-2 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all origin-top-right">
-                <Link to="/dashboard" className="btn btn-primary btn-sm w-36">Dashboard</Link>
-                <button onClick={handleLogout} className="btn btn-primary btn-sm w-36">Sign Out</button>
-                <Link to="/rider" className="btn btn-secondary text-primary btn-sm w-36">Be a Rider</Link>
-              </div>
-            </div>
-          ) : (
-            <>
-              <Link to={'/login'} className="btn btn-primary btn-sm">Sign In</Link>
-              <Link to='/register' className="btn btn-secondary text-primary btn-sm">Sign Up</Link>
-              <RiArrowRightUpLine className="text-secondary text-3xl bg-black rounded-full p-1" />
-            </>
-          )}
+                            {/* Hidden buttons that appear on hover */}
+                            <div className="absolute right-0 top-full mt-2 flex flex-col gap-2 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all origin-top-right">
+                                <Link to="/dashboard" className="btn btn-primary btn-sm w-36">Dashboard</Link>
+                                <button onClick={handleLogout} className="btn btn-primary btn-sm w-36">Sign Out</button>
+                                <Link to="/rider" className="btn btn-secondary text-primary btn-sm w-36">Be a Rider</Link>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <Link to={'/login'} className="btn btn-primary btn-sm">Sign In</Link>
+                            <Link to='/register' className="btn btn-secondary text-primary btn-sm">Sign Up</Link>
+                            <Link to="/login">
+                                <RiArrowRightUpLine
+                                    className="text-secondary bg-primary text-3xl rounded-full p-1 border border-primary transition-all duration-300 hover:rotate-45 hover:bg-secondary/20 dark:hover:bg-secondary/30"
+                                />
+                            </Link>
 
-          {/* Mobile Menu */}
-          <button className="lg:hidden btn btn-ghost text-2xl" onClick={toggleMobile}>
-            {mobileOpen ? <RiCloseLine /> : <RiMenu3Line />}
-          </button>
-        </div>
+                        </>
+                    )}
 
-      </nav>
+                    {/* Mobile Menu */}
+                    <button className="lg:hidden btn btn-ghost text-2xl" onClick={toggleMobile}>
+                        {mobileOpen ? <RiCloseLine /> : <RiMenu3Line />}
+                    </button>
+                </div>
 
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="lg:hidden bg-base-100/90 backdrop-blur-md py-4 px-6 border-t border-base-content/20">
-          <ul className="flex flex-col gap-4 text-lg font-medium">
-            {links.map(link => (
-              <li key={link.to}>
-                <NavLink
-                  to={link.to}
-                  className={({ isActive }) =>
-                    isActive ? "text-primary font-semibold" : "hover:text-primary transition-colors"
-                  }
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {link.name}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            </nav>
 
-    </header>
-  );
+            {/* Mobile Menu */}
+            {mobileOpen && (
+                <div className="lg:hidden bg-base-100/90 backdrop-blur-md py-4 px-6 border-t border-base-content/20">
+                    <ul className="flex flex-col gap-4 text-lg font-medium">
+                        {links.map(link => (
+                            <li key={link.to}>
+                                <NavLink
+                                    to={link.to}
+                                    className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary transition-colors"
+                                    }
+                                    onClick={() => setMobileOpen(false)}
+                                >
+                                    {link.name}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+        </header>
+    );
 };
 
 export default Navbar;

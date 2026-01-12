@@ -315,7 +315,7 @@ const SendParcel = () => {
 
                     <p className="text-sm text-gray-600 mt-6">* Pickup Time 4pm-7pm Approx.</p>
 
-                    <button type="submit" className="btn bg-secondary hover:bg-lime-500 mt-6">
+                    <button type="submit" className="btn bg-secondary text-primary hover:bg-lime-500 mt-6">
                         Proceed to Confirm Booking
                     </button>
                 </form>
