@@ -1,134 +1,184 @@
 import React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import useAuth from '../../Hooks/useAuth';
 
 const SendParcel = () => {
-    const { register, handleSubmit, watch, control, formState: { errors }, reset } = useForm();
-    const { user } = useAuth()
-    // console.log(user);
+    const {
+        register,
+        handleSubmit,
+        watch,
+        control,
+        formState: { errors }
+    } = useForm();
 
-    const axiosSecure = useAxiosSecure()
-    const serviceCenters = useLoaderData()
-    const regionsDuplicate = serviceCenters.map(c => c.region)
-    const regions = [...new Set(regionsDuplicate)]
-    const senderRegion = watch('senderRegion')
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
+    const serviceCenters = useLoaderData();
+
+    /* -------------------- Regions & Districts -------------------- */
+    const regions = [...new Set(serviceCenters.map(c => c.region))];
+
+    const senderRegion = watch('senderRegion');
     const receiverRegion = useWatch({ control, name: 'receiverRegion' });
-    // console.log(regions)
+    const parcelType = watch('parcelType');
 
-    const districtByRegion = region => {
-        const regionDistricts = serviceCenters.filter(c => c.region === region)
-        const districts = regionDistricts.map(d => d.district)
-        return districts
-    }
+    const districtByRegion = region =>
+        serviceCenters
+            .filter(c => c.region === region)
+            .map(d => d.district);
 
-    const handleSendParcel = (data) => {
-
-        console.log('Form Submitted:', data);
-        // reset()
+    /* -------------------- Submit Handler -------------------- */
+    const handleSendParcel = data => {
         const isDocument = data.parcelType === 'document';
-        const isSameDistrict = data.senderDistrict === data.receiverDistrict
-        const parcelWeight = parseFloat(data.parcelWeight)
-        console.log(isSameDistrict);
-        let cost = 0
+        const isSameDistrict =
+            data.senderDistrict === data.receiverDistrict;
+
+        let cost = 0;
+
         if (isDocument) {
             cost = isSameDistrict ? 60 : 80;
-        }
-        else {
-            if (parcelWeight < 3) {
+            delete data.parcelWeight;
+        } else {
+            const weight = parseFloat(data.parcelWeight);
+
+            if (weight < 3) {
                 cost = isSameDistrict ? 110 : 150;
-            }
-            else {
-                const minCharge = isSameDistrict ? 110 : 150;
-                const extraWeight = parcelWeight - 3
-                const extraCharge = isSameDistrict ? extraWeight * 40 : extraWeight * 40 + 40;
-                cost = minCharge + extraCharge
+            } else {
+                const base = isSameDistrict ? 110 : 150;
+                const extraWeight = weight - 3;
+                const extraCharge = isSameDistrict
+                    ? extraWeight * 40
+                    : extraWeight * 40 + 40;
+
+                cost = base + extraCharge;
             }
         }
+
         const parcelData = {
             ...data,
             cost
         };
 
         Swal.fire({
-            title: "Are you agree?",
+            title: 'Confirm Booking?',
             text: `You will be charged ${cost} BDT`,
-            icon: "warning",
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "I Agree"
-        }).then((result) => {
+            confirmButtonText: 'Confirm & Continue Payment'
+        }).then(result => {
             if (result.isConfirmed) {
-                axiosSecure.post('/parcels', parcelData)
-                    .then(res => {
-                        if (res.data.insertedId) {
-                            Swal.fire({
-                                    title: "Done",
-                                    text: "Your Booking Is Proceed.",
-                                    icon: "success"
-                                });
-                                reset()
-                            }
-                    })
-                // Swal.fire({
-                //     title: "Deleted!",
-                //     text: "Your file has been deleted.",
-                //     icon: "success"
-                // });
+                axiosSecure.post('/parcels', parcelData).then(res => {
+                    if (res.data.insertedId) {
+                        navigate('/dashboard/my-parcels');
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Parcel created successfully. Please proceed to payment.',
+                            showConfirmButton: false,
+                            timer: 2500
+                        });
+                    }
+                });
             }
         });
-    }
+    };
 
     return (
         <div className="w-full min-h-screen flex justify-center py-10 px-4">
-            <div className=" shadow-md rounded-2xl p-10 w-full max-w-6xl">
-                <h1 className="text-3xl font-bold  mb-2">Send A Parcel</h1>
-                <p className=" mb-8">Enter your parcel details</p>
+            <div className="shadow-md rounded-2xl p-10 w-full max-w-6xl">
+                <h1 className="text-3xl font-bold mb-2">Send a Parcel</h1>
+                <p className="mb-8">Enter your parcel details</p>
 
                 <form onSubmit={handleSubmit(handleSendParcel)}>
                     {/* Parcel Type */}
-                    <div className="flex items-center gap-8 mb-10">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value="document" {...register('parcelType', { required: true })} />
-                            <span className="">Document</span>
+                    <div className="flex gap-8 mb-6">
+                        <label className="flex items-center gap-2">
+                            <input
+                                type="radio"
+                                value="document"
+                                {...register('parcelType', { required: true })}
+                            />
+                            Document
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio"
-                            value="non-document" {...register('parcelType', { required: true })} />
-                            <span className="">Non-Document</span>
+
+                        <label className="flex items-center gap-2">
+                            <input
+                                type="radio"
+                                value="non-document"
+                                {...register('parcelType', { required: true })}
+                            />
+                            Non-Document
                         </label>
                     </div>
-                    {errors.parcelType && <p className="text-red-600 mb-4">Parcel type is required.</p>}
+
+                    {errors.parcelType && (
+                        <p className="text-red-600 mb-4">
+                            Parcel type is required
+                        </p>
+                    )}
 
                     {/* Parcel Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div className="grid md:grid-cols-2 gap-6 mb-10">
                         <div>
-                            <label className="label font-bold">Parcel Name</label>
+                            <label className="label font-bold">
+                                Parcel Name
+                            </label>
                             <input
-                                type="text"
                                 {...register('parcelName', { required: true })}
-                                placeholder="Parcel Name"
                                 className="input input-bordered w-full"
+                                placeholder="Parcel Name"
                             />
-                            {errors.parcelName && <p className="text-red-600">Parcel name is required</p>}
+                            {errors.parcelName && (
+                                <p className="text-red-600">
+                                    Parcel name is required
+                                </p>
+                            )}
                         </div>
 
                         <div>
-                            <label className="label font-bold">Parcel Weight (KG)</label>
+                            <label className="label font-bold">
+                                Parcel Weight (KG)
+                                {parcelType === 'non-document' && (
+                                    <span className="text-red-500"> *</span>
+                                )}
+                            </label>
+
                             <input
                                 type="number"
                                 step="0.01"
-                                {...register('parcelWeight', { required: true, min: 0.01 })}
-                                placeholder="Parcel Weight (KG)"
+                                disabled={parcelType === 'document'}
+                                placeholder={
+                                    parcelType === 'document'
+                                        ? 'Not required for documents'
+                                        : 'Parcel Weight (KG)'
+                                }
+                                {...register('parcelWeight', {
+                                    validate: value => {
+                                        if (parcelType === 'document')
+                                            return true;
+                                        if (!value)
+                                            return 'Weight is required';
+                                        if (value <= 0)
+                                            return 'Invalid weight';
+                                        return true;
+                                    }
+                                })}
                                 className="input input-bordered w-full"
                             />
-                            {errors.parcelWeight && <p className="text-red-600">Parcel weight is required</p>}
+
+                            {errors.parcelWeight && (
+                                <p className="text-red-600">
+                                    {errors.parcelWeight.message}
+                                </p>
+                            )}
                         </div>
                     </div>
 
+                    {/* Sender & Receiver sections remain unchanged */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         {/* Sender */}
                         <div>
@@ -223,6 +273,9 @@ const SendParcel = () => {
                             </div>
                         </div>
 
+
+
+                        {/* Your existing sender/receiver JSX is correct */}
                         {/* Receiver */}
                         <div>
                             <h2 className="text-lg font-semibold mb-4">Receiver Details</h2>
@@ -311,11 +364,16 @@ const SendParcel = () => {
                                 </div>
                             </div>
                         </div>
+
                     </div>
+                    <p className="text-sm text-gray-600 mt-6">
+                        * Pickup Time: 4:00 PM – 7:00 PM (Approx.)
+                    </p>
 
-                    <p className="text-sm text-gray-600 mt-6">* Pickup Time 4pm-7pm Approx.</p>
-
-                    <button type="submit" className="btn bg-secondary text-primary hover:bg-lime-500 mt-6">
+                    <button
+                        type="submit"
+                        className="btn bg-secondary text-primary hover:bg-lime-500 mt-6"
+                    >
                         Proceed to Confirm Booking
                     </button>
                 </form>
