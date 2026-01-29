@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Outlet } from 'react-router';
 import Logo from '../Components/Logo';
 import { MdDashboard } from 'react-icons/md';
-import { FaParking } from 'react-icons/fa';
+import { FaCreditCard, FaParking } from 'react-icons/fa';
 
 const DashboardLayout = () => {
     return (
@@ -43,6 +43,13 @@ const DashboardLayout = () => {
                             </Link>
                         </li>
 
+                        <li>
+                            <Link to='paymentHistory'  className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History">
+                                {/* Settings icon */}
+                                <FaCreditCard className='text-xl'/>
+                                <span className="is-drawer-close:hidden">Payment History</span>
+                            </Link>
+                        </li>
 
                         {/* List item */}
                         <li>
